@@ -1,0 +1,76 @@
+var canine = {
+  bark: function(){
+    console.log('bark');
+  },
+  legs: 4
+};
+
+var dog = Object.create(canine);
+
+dog.fetch = function() {
+  console.log('fetch');
+};
+
+var myDog = Object.create(dog);
+var empty = Object.create(null);
+
+
+
+function myPrototypeOf(newObject, originalObject) {
+
+  if(typeof originalObject === 'undefined' || originalObject === 'null' ) {
+    throw new TypeError ('prototype cannot be null or unefined');
+  }
+
+  var originalObjPropArray = [];
+  for (var originalProp in originalObject) {
+    originalObjPropArray.push(originalProp);
+  }
+
+  var newObjPropArray = [];
+  for (var newProp in newObject) {
+    newObjPropArray.push(newProp);
+  }
+
+  var itemCount = 0;
+  newObjPropArray.forEach(function(item, i){
+    if(originalObjPropArray.includes(item)) {
+      itemCount++;
+    }
+  });
+
+  if(itemCount === originalObjPropArray.length) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+console.log(myPrototypeOf(myDog, dog));
+
+
+// myPrototypeOf(dog, canine);
+
+// ==========================
+// TESTS
+// ==========================
+
+// It should compare properties on each object passed in
+// It should throw a typeError of prototypeObj is undefined
+// It should return false if the second parameter is not a prototype of the first
+
+tests({
+  'It should return true if the second parameter is a prototype of the first': function() {
+    eq(myPrototypeOf(myDog, dog), true);
+	},
+  'It should return false if the second parameter is not a prototype of the first': function() {
+    eq(myPrototypeOf(empty, dog), false);
+	},
+  'It should throw an error if the second parameter is not defined': function() {
+    try {
+      isPrototypeOf(empty, undefined);
+    } catch (e) {
+      eq(e instanceof TypeError, true);
+    }
+	}
+});
